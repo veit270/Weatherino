@@ -5,6 +5,7 @@ buildscript {
         navigationVersion = '2.5.1'
         roomVersion = '2.4.3'
         coroutinesVersion = '1.6.2'
+        glideVersion = '4.13.2'
     }
 
     repositories {
@@ -17,12 +18,6 @@ buildscript {
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
     }
-}
-
-plugins {
-    id 'com.android.application' version '7.2.1' apply false
-    id 'com.android.library' version '7.2.1' apply false
-    id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
 }
 
 task clean(type: Delete) {

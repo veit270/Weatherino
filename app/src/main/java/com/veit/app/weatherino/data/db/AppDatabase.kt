@@ -1,4 +1,4 @@
-package com.veit.app.weatherino.data
+package com.veit.app.weatherino.data.db
 
 import android.content.Context
 import androidx.room.Database
@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [],
+    entities = [WeatherBookmark::class],
     version = 1,
     exportSchema = false
 )

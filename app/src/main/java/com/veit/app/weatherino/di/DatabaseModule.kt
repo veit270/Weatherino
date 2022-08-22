@@ -1,8 +1,8 @@
 package com.veit.app.weatherino.di
 
 import android.content.Context
-import com.veit.app.weatherino.data.AppDatabase
-import com.veit.app.weatherino.data.BookmarksDao
+import com.veit.app.weatherino.data.db.AppDatabase
+import com.veit.app.weatherino.data.db.BookmarksDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
