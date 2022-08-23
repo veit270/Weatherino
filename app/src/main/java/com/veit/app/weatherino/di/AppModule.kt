@@ -4,7 +4,9 @@ import com.google.gson.GsonBuilder
 import com.veit.app.weatherino.api.WeatherApi
 import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.BookmarksRepositoryImpl
+import com.veit.app.weatherino.data.TempData
 import com.veit.app.weatherino.data.db.BookmarksDao
+import com.veit.app.weatherino.utils.TempDataAdapter
 import com.veit.app.weatherino.utils.WeatherChecker
 import com.veit.app.weatherino.utils.WeatherCheckerImpl
 import dagger.Module
@@ -38,7 +40,7 @@ object AppModule {
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org")
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
+            .addConverterFactory(GsonConverterFactory.create(createGson()))
             .client(OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()
@@ -55,6 +57,10 @@ object AppModule {
             )
             .build()
     }
+
+    private fun createGson() = GsonBuilder()
+        .registerTypeAdapter(TempData::class.java, TempDataAdapter())
+        .create()
 
     @Provides
     @Singleton

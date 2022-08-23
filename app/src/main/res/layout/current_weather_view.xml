@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="currentWeather"
@@ -12,16 +14,6 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <ProgressBar
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:id="@+id/progressBar"
-            visibleOrGone="@{loading}"
-            android:indeterminate="true"
-            android:indeterminateTintMode="src_atop"
-            android:indeterminateTint="@color/secondary"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,22 +37,90 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{currentWeather.weather.get(0).description}"
-                    android:textSize="@dimen/largeText"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    android:textSize="@dimen/largeText" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:paddingVertical="@dimen/vertical_margin_standard">
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:layout_editor_absoluteY="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/currentTemperatureTextView">
 
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_drop_down_24" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/vertical_margin_between"
+                        android:text="@{currentWeather.main.tempMin.text}"
+                        android:textSize="@dimen/smallText"
+                        android:textColor="@color/secondaryText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/vertical_margin_between"
+                        android:text="@{currentWeather.main.tempMax.text}"
+                        android:textSize="@dimen/smallText"
+                        android:textColor="@color/secondaryText"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_drop_up_24" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/currentTemperatureTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{currentWeather.main.temp.text}"
+                    android:textSize="@dimen/bigText"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/mediumText"
+                    android:text="@{@string/feels_like(currentWeather.main.feelsLike.text)}"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/currentTemperatureTextView"
+                    android:textColor="@color/secondaryText"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:id="@+id/progressBar"
+            visibleOrGone="@{loading}"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/secondary"/>
 
     </FrameLayout>
 

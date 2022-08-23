@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="com.veit.app.weatherino.utils.Resource"/>
+        <import type="com.veit.app.weatherino.api.current_weather.CurrentWeather"/>
         <variable
-            name="currentWeather"
-            type="com.veit.app.weatherino.api.current_weather.CurrentWeather" />
-        <variable
-            name="loading"
-            type="Boolean" />
+            name="currentWeatherResource"
+            type="Resource&lt;CurrentWeather>" />
     </data>
 
     <LinearLayout
@@ -17,8 +16,20 @@
         <com.veit.app.weatherino.ui.views.CurrentWeatherView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            currentWeather="@{currentWeather}"
-            loading="@{loading}"/>
+            currentWeatherResource="@{currentWeatherResource}"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_bookmark"
+            android:layout_gravity="center"
+            android:layout_marginVertical="@dimen/vertical_margin_standard"
+            android:id="@+id/addBookmarkDate"/>
+
+        <com.veit.app.weatherino.ui.views.BookmarksView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 

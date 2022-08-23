@@ -2,18 +2,19 @@ package com.veit.app.weatherino.api.daily_weather
 
 
 import com.google.gson.annotations.SerializedName
+import com.veit.app.weatherino.data.TempData
 
 data class Temp(
     @SerializedName("day")
-    val day: Double,
+    val day: TempData,
     @SerializedName("eve")
-    val eve: Double,
+    val eve: TempData,
     @SerializedName("max")
-    val max: Double,
+    val max: TempData,
     @SerializedName("min")
-    val min: Double,
+    val min: TempData,
     @SerializedName("morn")
-    val morn: Double,
+    val morn: TempData,
     @SerializedName("night")
-    val night: Double
+    val night: TempData
 )

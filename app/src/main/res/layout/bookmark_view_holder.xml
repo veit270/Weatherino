@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="com.veit.app.weatherino.utils.Utils"/>
+        <variable
+            name="bookmarkedWeatherInfo"
+            type="com.veit.app.weatherino.data.BookmarkedWeatherInfo" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/vertical_margin_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@{Utils.INSTANCE.toReadableDate(bookmarkedWeatherInfo.bookmark.dateTs, context)}"
+            android:textSize="@dimen/mediumText"
+            android:id="@+id/dateTextView"/>
+
+        <com.veit.app.weatherino.ui.views.WeatherIconView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="@dimen/vertical_margin_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/dateTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            iconCode="@{bookmarkedWeatherInfo.weather.weather.get(0).icon}"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
