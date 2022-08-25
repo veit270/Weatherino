@@ -2,6 +2,7 @@ package com.veit.app.weatherino.api.daily_weather
 
 
 import com.google.gson.annotations.SerializedName
+import com.veit.app.weatherino.api.Weather
 
 data class DailyWeather(
     @SerializedName("clouds")
@@ -9,7 +10,7 @@ data class DailyWeather(
     @SerializedName("deg")
     val deg: Int,
     @SerializedName("dt")
-    val dt: Int,
+    val dt: Long,
     @SerializedName("feels_like")
     val feelsLike: FeelsLike,
     @SerializedName("gust")
@@ -31,5 +32,5 @@ data class DailyWeather(
     @SerializedName("temp")
     val temp: Temp,
     @SerializedName("weather")
-    val weather: List<Weather>
+    val weather: Weather
 )

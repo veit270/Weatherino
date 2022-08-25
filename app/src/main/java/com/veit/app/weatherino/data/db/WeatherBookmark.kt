@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class WeatherBookmark(
     @PrimaryKey
-    val dateTs: Long,
+    val dateTsSeconds: Long,
     @ColumnInfo
     val name: String?
 )

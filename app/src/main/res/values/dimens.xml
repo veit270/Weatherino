@@ -4,7 +4,7 @@
     <dimen name="largeText">22sp</dimen>
     <dimen name="mediumText">17sp</dimen>
     <dimen name="smallText">12sp</dimen>
-    <dimen name="vertical_margin_standard">24dp</dimen>
-    <dimen name="vertical_margin_small">12dp</dimen>
-    <dimen name="vertical_margin_between">4dp</dimen>
+    <dimen name="margin_standard">24dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_between">4dp</dimen>
 </resources>

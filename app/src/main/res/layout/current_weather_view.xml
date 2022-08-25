@@ -31,12 +31,12 @@
                 <com.veit.app.weatherino.ui.views.WeatherIconView
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    iconCode="@{currentWeather.weather.get(0).icon}"/>
+                    iconCode="@{currentWeather.weather.icon}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{currentWeather.weather.get(0).description}"
+                    android:text="@{currentWeather.weather.description}"
                     android:textAlignment="center"
                     android:textSize="@dimen/largeText" />
 
@@ -46,7 +46,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingVertical="@dimen/vertical_margin_standard">
+                android:paddingVertical="@dimen/margin_standard">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/vertical_margin_between"
+                        android:layout_marginEnd="@dimen/margin_between"
                         android:text="@{currentWeather.main.tempMin.text}"
                         android:textSize="@dimen/smallText"
                         android:textColor="@color/secondaryText" />
@@ -74,7 +74,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/vertical_margin_between"
+                        android:layout_marginStart="@dimen/margin_between"
                         android:text="@{currentWeather.main.tempMax.text}"
                         android:textSize="@dimen/smallText"
                         android:textColor="@color/secondaryText"/>

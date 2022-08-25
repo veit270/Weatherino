@@ -9,6 +9,8 @@ import com.veit.app.weatherino.data.BookmarkedWeatherInfo
 import com.veit.app.weatherino.databinding.BookmarkViewHolderBinding
 
 class BookmarksAdapter: ListAdapter<BookmarkedWeatherInfo, BookmarksAdapter.ViewHolder>(BookmarksCallback()) {
+    lateinit var swipeAction: SwipeAction<BookmarkedWeatherInfo>
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             BookmarkViewHolderBinding.inflate(
@@ -21,12 +23,21 @@ class BookmarksAdapter: ListAdapter<BookmarkedWeatherInfo, BookmarksAdapter.View
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(
+    inner class ViewHolder(
         private val binding: BookmarkViewHolderBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root), Swipeable {
         fun bind(bookmarkedWeatherInfo: BookmarkedWeatherInfo) {
             with(binding) {
+                binding.bookmarkedWeatherInfo = bookmarkedWeatherInfo
+                executePendingBindings()
+            }
+        }
 
+        override fun onSwiped() {
+            bindingAdapterPosition.let {
+                if (it != -1) {
+                    swipeAction.onItemSwiped(getItem(it))
+                }
             }
         }
     }
@@ -34,10 +45,10 @@ class BookmarksAdapter: ListAdapter<BookmarkedWeatherInfo, BookmarksAdapter.View
 
 private class BookmarksCallback : DiffUtil.ItemCallback<BookmarkedWeatherInfo>() {
     override fun areItemsTheSame(oldItem: BookmarkedWeatherInfo, newItem: BookmarkedWeatherInfo): Boolean {
-        return oldItem.bookmark.dateTs == newItem.bookmark.dateTs
+        return oldItem.bookmark.dateTsSeconds == newItem.bookmark.dateTsSeconds
     }
 
     override fun areContentsTheSame(oldItem: BookmarkedWeatherInfo, newItem: BookmarkedWeatherInfo): Boolean {
-        return oldItem.weather == newItem.weather
+        return oldItem == newItem
     }
 }

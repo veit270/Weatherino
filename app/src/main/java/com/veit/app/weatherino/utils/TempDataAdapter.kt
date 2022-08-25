@@ -13,7 +13,7 @@ class TempDataAdapter: TypeAdapter<TempData>() {
     override fun read(reader: JsonReader): TempData {
         return with(reader) {
             nextDouble().let {
-                TempData(it, Utils.toReadableTemperature(it))
+                TempData(it, toReadableTemperature(it))
             }
         }
     }

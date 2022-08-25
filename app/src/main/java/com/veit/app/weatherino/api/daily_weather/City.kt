@@ -2,6 +2,7 @@ package com.veit.app.weatherino.api.daily_weather
 
 
 import com.google.gson.annotations.SerializedName
+import com.veit.app.weatherino.api.Coord
 
 data class City(
     @SerializedName("coord")

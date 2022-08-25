@@ -3,9 +3,18 @@
     <data>
         <import type="com.veit.app.weatherino.utils.Resource"/>
         <import type="com.veit.app.weatherino.api.current_weather.CurrentWeather"/>
+        <import type="com.veit.app.weatherino.data.BookmarkedWeatherInfo"/>
+        <import type="java.util.List"/>
+        <import type="com.veit.app.weatherino.adapter.SwipeAction" />
         <variable
             name="currentWeatherResource"
             type="Resource&lt;CurrentWeather>" />
+        <variable
+            name="bookmarksResource"
+            type="Resource&lt;List&lt;BookmarkedWeatherInfo>>" />
+        <variable
+            name="bookmarksSwipeAction"
+            type="SwipeAction&lt;BookmarkedWeatherInfo>" />
     </data>
 
     <LinearLayout
@@ -23,13 +32,15 @@
             android:layout_height="wrap_content"
             android:text="@string/add_bookmark"
             android:layout_gravity="center"
-            android:layout_marginVertical="@dimen/vertical_margin_standard"
+            android:layout_marginVertical="@dimen/margin_standard"
             android:id="@+id/addBookmarkDate"/>
 
         <com.veit.app.weatherino.ui.views.BookmarksView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            bookmarksResource="@{bookmarksResource}"
+            swipeAction="@{bookmarksSwipeAction}"/>
 
     </LinearLayout>
 

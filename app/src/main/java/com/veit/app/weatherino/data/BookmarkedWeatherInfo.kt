@@ -5,5 +5,5 @@ import com.veit.app.weatherino.data.db.WeatherBookmark
 
 data class BookmarkedWeatherInfo(
     val bookmark: WeatherBookmark,
-    val weather: DailyWeather
+    val weather: DailyWeather?
 )

@@ -15,23 +15,27 @@ class CurrentWeatherView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    val binding = CurrentWeatherViewBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = CurrentWeatherViewBinding.inflate(LayoutInflater.from(context), this, true)
+
+    fun setCurrentWeatherResource(currentWeatherResource: Resource<CurrentWeather>) {
+        when(currentWeatherResource.status) {
+            Status.SUCCESS -> {
+                binding.loading = false
+                binding.currentWeather = currentWeatherResource.data
+            }
+            Status.ERROR -> {
+                binding.loading = false
+                binding.currentWeather = null
+            }
+            Status.LOADING -> {
+                binding.loading = true
+                binding.currentWeather = null
+            }
+        }
+    }
 }
 
 @BindingAdapter("currentWeatherResource")
-fun CurrentWeatherView.setCurrentWeatherResource(currentWeatherResource: Resource<CurrentWeather>) {
-    when(currentWeatherResource.status) {
-        Status.SUCCESS -> {
-            binding.loading = false
-            binding.currentWeather = currentWeatherResource.data
-        }
-        Status.ERROR -> {
-            binding.loading = false
-            binding.currentWeather = null
-        }
-        Status.LOADING -> {
-            binding.loading = true
-            binding.currentWeather = null
-        }
-    }
+fun CurrentWeatherView.bindCurrentWeatherResource(currentWeatherResource: Resource<CurrentWeather>) {
+    setCurrentWeatherResource(currentWeatherResource)
 }

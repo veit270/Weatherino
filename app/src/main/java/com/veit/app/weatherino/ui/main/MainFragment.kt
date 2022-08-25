@@ -2,12 +2,18 @@ package com.veit.app.weatherino.ui.main
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.widget.DatePicker
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.veit.app.weatherino.R
+import com.veit.app.weatherino.adapter.SwipeAction
+import com.veit.app.weatherino.data.BookmarkedWeatherInfo
 import com.veit.app.weatherino.databinding.FragmentMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
@@ -33,7 +39,15 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
         viewModel.currentWeather.observe(viewLifecycleOwner) {
             binding.currentWeatherResource = it
         }
+        viewModel.bookmarkedWeathers.observe(viewLifecycleOwner) {
+            binding.bookmarksResource = it
+        }
 
+        binding.bookmarksSwipeAction = object : SwipeAction<BookmarkedWeatherInfo> {
+            override fun onItemSwiped(item: BookmarkedWeatherInfo) {
+                viewModel.deleteBookmark(item)
+            }
+        }
         binding.addBookmarkDate.setOnClickListener { pickBookmarkDate() }
     }
 
@@ -65,6 +79,21 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        LocalDate.of(year, month, dayOfMonth).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val time = LocalDate.of(year, month + 1, dayOfMonth)
+            .atStartOfDay()
+            .atZone(ZoneId.systemDefault())
+            .toEpochSecond()
+        val editText = EditText(requireContext()).apply {
+            hint = getString(R.string.name)
+            inputType = InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            imeOptions = EditorInfo.IME_ACTION_DONE
+        }
+        AlertDialog.Builder(requireContext())
+            .setView(editText)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                viewModel.addBookmark(editText.text.toString(), time)
+            }
+            .setMessage(R.string.bookmark_name_title)
+            .create().show()
     }
 }

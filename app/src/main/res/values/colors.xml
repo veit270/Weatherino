@@ -7,7 +7,7 @@
     <color name="secondaryLight">#ffff6b</color>
     <color name="secondaryDark">#c6a700</color>
     <color name="primaryText">#212121</color>
-    <color name="secondaryText">#212121</color>
+    <color name="secondaryText">#373737</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="control_highlight">@color/primary</color>

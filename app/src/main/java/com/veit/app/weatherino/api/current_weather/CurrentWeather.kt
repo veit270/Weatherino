@@ -2,6 +2,8 @@ package com.veit.app.weatherino.api.current_weather
 
 
 import com.google.gson.annotations.SerializedName
+import com.veit.app.weatherino.api.Coord
+import com.veit.app.weatherino.api.Weather
 
 data class CurrentWeather(
     @SerializedName("base")
@@ -13,7 +15,7 @@ data class CurrentWeather(
     @SerializedName("coord")
     val coord: Coord,
     @SerializedName("dt")
-    val dt: Int,
+    val dt: Long,
     @SerializedName("id")
     val id: Int,
     @SerializedName("main")
@@ -27,7 +29,7 @@ data class CurrentWeather(
     @SerializedName("visibility")
     val visibility: Int,
     @SerializedName("weather")
-    val weather: List<Weather>,
+    val weather: Weather,
     @SerializedName("wind")
     val wind: Wind
 )

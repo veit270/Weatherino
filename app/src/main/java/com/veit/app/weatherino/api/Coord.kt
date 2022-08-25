@@ -1,4 +1,4 @@
-package com.veit.app.weatherino.api.current_weather
+package com.veit.app.weatherino.api
 
 
 import com.google.gson.annotations.SerializedName

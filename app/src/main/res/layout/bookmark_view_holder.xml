@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <import type="com.veit.app.weatherino.utils.Utils"/>
@@ -9,30 +8,98 @@
             type="com.veit.app.weatherino.data.BookmarkedWeatherInfo" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/vertical_margin_small"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:text="@{Utils.INSTANCE.toReadableDate(bookmarkedWeatherInfo.bookmark.dateTs, context)}"
-            android:textSize="@dimen/mediumText"
-            android:id="@+id/dateTextView"/>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginStart="@dimen/margin_small">
 
-        <com.veit.app.weatherino.ui.views.WeatherIconView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="@dimen/vertical_margin_small"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/dateTextView"
-            app:layout_constraintTop_toTopOf="parent"
-            iconCode="@{bookmarkedWeatherInfo.weather.weather.get(0).icon}"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{Utils.INSTANCE.secondsToReadableDate(bookmarkedWeatherInfo.bookmark.dateTsSeconds, context)}"
+                android:textSize="@dimen/smallText"
+                android:paddingHorizontal="@dimen/margin_between"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                visibleOrInvisible="@{bookmarkedWeatherInfo.bookmark.name != null}"
+                android:text="@{bookmarkedWeatherInfo.bookmark.name}"
+                android:textSize="@dimen/smallText"
+                android:lines="2"
+                android:ellipsize="end"
+                android:textAlignment="center"/>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                visibleOrInvisible="@{bookmarkedWeatherInfo.weather != null}">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/margin_small">
+
+                    <com.veit.app.weatherino.ui.views.WeatherIconView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        iconCode="@{bookmarkedWeatherInfo.weather.weather.icon}"
+                        android:id="@+id/iconView"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{bookmarkedWeatherInfo.weather.weather.description}"
+                        android:textSize="@dimen/smallText"
+                        android:lines="2"
+                        android:textAlignment="center"/>
+
+                </LinearLayout>
+
+                <com.veit.app.weatherino.ui.views.TimeOfDayTempView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    temp="@{bookmarkedWeatherInfo.weather.temp.day.text}"
+                    feelsLike="@{bookmarkedWeatherInfo.weather.feelsLike.day.text}"
+                    image="@{@drawable/ic_wb_sunny_24}"/>
+
+                <com.veit.app.weatherino.ui.views.TimeOfDayTempView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    temp="@{bookmarkedWeatherInfo.weather.temp.night.text}"
+                    feelsLike="@{bookmarkedWeatherInfo.weather.feelsLike.night.text}"
+                    image="@{@drawable/ic_nights_stay_24}"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/mediumText"
+                android:text="@string/data_not_available"
+                visibleOrGone="@{bookmarkedWeatherInfo.weather == null}"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
 
 </layout>
