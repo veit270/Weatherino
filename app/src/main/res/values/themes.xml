@@ -1,5 +1,4 @@
 <resources>
-    <!-- Base application theme. -->
     <style name="Theme.Weatherino" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/black</item>
@@ -12,6 +11,7 @@
         <item name="colorControlNormal">@color/secondary</item>
         <item name="materialButtonStyle">@style/Theme.Weatherino.Button</item>
         <item name="android:textSize">@dimen/mediumText</item>
+        <item name="colorSurface">@color/colorSurface</item>
     </style>
 
     <style name="Theme.Weatherino.Button" parent="Widget.MaterialComponents.Button">
