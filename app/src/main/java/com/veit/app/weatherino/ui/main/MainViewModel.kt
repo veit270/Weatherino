@@ -11,6 +11,7 @@ import com.veit.app.weatherino.data.db.WeatherBookmark
 import com.veit.app.weatherino.utils.Resource
 import com.veit.app.weatherino.utils.WeatherChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,26 +43,28 @@ class MainViewModel @Inject constructor(
     fun loadCurrentWeather() {
         _currentWeather.value = Resource.Loading()
         currentWeatherJob?.cancel()
-        currentWeatherJob = viewModelScope.launch {
-            _currentWeather.value = weatherChecker.fetchCurrentWeather()?.let {
-                Resource.Success(it)
-            } ?: Resource.Error()
+        currentWeatherJob = viewModelScope.launch(Dispatchers.Default) {
+            _currentWeather.postValue(
+                weatherChecker.fetchCurrentWeather()?.let { Resource.Success(it) }
+                    ?: Resource.Error())
         }
     }
 
     fun loadBookmarks() {
         _bookmarkedWeathers.value = Resource.Loading()
         bookmarksJob?.cancel()
-        bookmarksJob = viewModelScope.launch {
+        bookmarksJob = viewModelScope.launch(Dispatchers.Default) {
             bookmarksRepository.deleteOldBookmarks()
             bookmarksRepository.bookmarksFlow
                 .collectLatest { bookmarks ->
                     if(bookmarks.isNotEmpty()) {
-                        _bookmarkedWeathers.value = weatherChecker.fetchWeatherForBookmarks(bookmarks)?.let {
-                            Resource.Success(it)
-                        } ?: Resource.Error()
+                        _bookmarkedWeathers.postValue(
+                            weatherChecker.fetchWeatherForBookmarks(bookmarks)?.let {
+                                Resource.Success(it)
+                            } ?: Resource.Error()
+                        )
                     } else {
-                        _bookmarkedWeathers.value = Resource.Success(emptyList())
+                        _bookmarkedWeathers.postValue(Resource.Success(emptyList()))
                     }
                 }
         }
