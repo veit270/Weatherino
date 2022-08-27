@@ -1,6 +1,5 @@
 package com.veit.app.weatherino.viewmodel
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.veit.app.weatherino.api.Coord
 import com.veit.app.weatherino.api.Weather
 import com.veit.app.weatherino.api.current_weather.*
@@ -12,30 +11,25 @@ import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.TempData
 import com.veit.app.weatherino.data.db.WeatherBookmark
 import com.veit.app.weatherino.ui.main.MainViewModel
+import com.veit.app.weatherino.utils.CoroutinesRuleTest
 import com.veit.app.weatherino.utils.Resource
 import com.veit.app.weatherino.utils.WeatherChecker
 import com.veit.app.weatherino.utils.awaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
 @ExperimentalCoroutinesApi
-@RunWith(JUnit4::class)
-class MainViewModelTest {
+@RunWith(MockitoJUnitRunner::class)
+class MainViewModelTest: CoroutinesRuleTest() {
 
     private lateinit var viewModel: MainViewModel
 
@@ -44,11 +38,6 @@ class MainViewModelTest {
 
     @Mock
     lateinit var bookmarksRepository: BookmarksRepository
-
-    private val testDispatcher = StandardTestDispatcher()
-
-    @get:Rule
-    var instantExecutorRule = InstantTaskExecutorRule()
 
     private var currentWeather: CurrentWeather = prepareCurrentWeather()
 
@@ -62,23 +51,12 @@ class MainViewModelTest {
         BookmarkedWeatherInfo(it, prepareDailyWeather())
     }
 
-    @Before
-    fun setup() {
-        MockitoAnnotations.openMocks(this)
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
     fun loadCurrentWeather() = runTest {
         initViewModel()
 
         currentWeather = prepareCurrentWeather() // different dt
-        Mockito.`when`(weatherChecker.fetchCurrentWeather())
+        `when`(weatherChecker.fetchCurrentWeather())
             .thenReturn(currentWeather)
 
         viewModel.loadCurrentWeather()
@@ -93,9 +71,9 @@ class MainViewModelTest {
         val bookmarksSubList = bookmarks.subList(1, 2)
         val bookmarkedWeatherInfoSubList = bookmarkedWeatherInfoList.subList(1, 2)
 
-        Mockito.`when`(bookmarksRepository.bookmarksFlow)
+        `when`(bookmarksRepository.bookmarksFlow)
             .thenReturn(flowOf(bookmarksSubList))
-        Mockito.`when`(weatherChecker.fetchWeatherForBookmarks(bookmarksSubList))
+        `when`(weatherChecker.fetchWeatherForBookmarks(bookmarksSubList))
             .thenReturn(bookmarkedWeatherInfoSubList)
 
         viewModel.loadBookmarks()
@@ -107,17 +85,29 @@ class MainViewModelTest {
     fun addBookmark() = runTest {
         initViewModel()
 
-        Mockito.`when`(bookmarksRepository.addBookmark(WeatherBookmark(123, "name")))
         viewModel.addBookmark("name", 123)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun addBookmarkWithEmptyName() = runTest {
+        initViewModel()
+
+        viewModel.addBookmark("  ", 123)
+        advanceUntilIdle()
+
+        verify(bookmarksRepository).addBookmark(WeatherBookmark(123, null))
     }
 
     @Test
     fun deleteBookmark() = runTest {
         initViewModel()
-
         val bookmark = WeatherBookmark(123, "name")
-        Mockito.`when`(bookmarksRepository.deleteBookmark(bookmark))
+
         viewModel.deleteBookmark(BookmarkedWeatherInfo(bookmark, prepareDailyWeather()))
+        advanceUntilIdle()
+
+        verify(bookmarksRepository).deleteBookmark(bookmark)
     }
 
     private suspend fun initViewModel() {
@@ -127,11 +117,11 @@ class MainViewModelTest {
     }
 
     private suspend fun expectInit() {
-        Mockito.`when`(weatherChecker.fetchCurrentWeather())
+        `when`(weatherChecker.fetchCurrentWeather())
             .thenReturn(currentWeather)
-        Mockito.`when`(bookmarksRepository.bookmarksFlow)
+        `when`(bookmarksRepository.bookmarksFlow)
             .thenReturn(flowOf(bookmarks))
-        Mockito.`when`(weatherChecker.fetchWeatherForBookmarks(bookmarks))
+        `when`(weatherChecker.fetchWeatherForBookmarks(bookmarks))
             .thenReturn(bookmarkedWeatherInfoList)
     }
 

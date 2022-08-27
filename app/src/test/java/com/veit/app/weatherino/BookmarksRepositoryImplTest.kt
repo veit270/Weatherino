@@ -3,7 +3,6 @@ package com.veit.app.weatherino
 import com.veit.app.weatherino.data.BookmarksRepositoryImpl
 import com.veit.app.weatherino.data.db.BookmarksDao
 import com.veit.app.weatherino.data.db.WeatherBookmark
-import com.veit.app.weatherino.utils.convertToStartOfDay
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -11,28 +10,28 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 import org.mockito.Mock
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import java.util.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
+import java.time.LocalDate
+import java.time.ZoneId
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(JUnit4::class)
+@RunWith(MockitoJUnitRunner::class)
 class BookmarksRepositoryImplTest {
     @Mock
     lateinit var bookmarksDao: BookmarksDao
 
     private lateinit var repository: BookmarksRepositoryImpl
 
-    val bookmark = WeatherBookmark(123, "bookmark1")
+    private val bookmark = WeatherBookmark(123, "bookmark1")
 
     private val flow = flowOf(listOf(bookmark))
 
     @Before
     fun setup() {
-        MockitoAnnotations.openMocks(this)
-        Mockito.`when`(bookmarksDao.getAll()).thenReturn(flow)
+        `when`(bookmarksDao.getAll()).thenReturn(flow)
         repository = BookmarksRepositoryImpl(bookmarksDao)
     }
 
@@ -44,30 +43,34 @@ class BookmarksRepositoryImplTest {
     @Test
     fun deleteOlderBookmarks() = runTest {
         repository.deleteOldBookmarks()
-        Mockito.verify(bookmarksDao).deleteOlderBookmarks(convertToStartOfDay(Date().time))
+        verify(bookmarksDao).deleteOlderBookmarks(
+            LocalDate.now().minusDays(1)
+            .atStartOfDay()
+            .atZone(ZoneId.systemDefault())
+            .toEpochSecond())
     }
 
     @Test
     fun deleteBookmark() = runTest {
         repository.deleteBookmark(bookmark)
-        Mockito.verify(bookmarksDao).delete(bookmark)
+        verify(bookmarksDao).delete(bookmark)
     }
 
     @Test
     fun addBookmarkWhenItExists() = runTest {
-        Mockito.`when`(bookmarksDao.exists(bookmark.dateTsSeconds))
+        `when`(bookmarksDao.exists(bookmark.dateTsSeconds))
             .thenReturn(true)
 
         repository.addBookmark(bookmark)
-        Mockito.verify(bookmarksDao).update(bookmark)
+        verify(bookmarksDao).update(bookmark)
     }
 
     @Test
     fun addBookmarkWhenItNotExists() = runTest {
-        Mockito.`when`(bookmarksDao.exists(bookmark.dateTsSeconds))
+        `when`(bookmarksDao.exists(bookmark.dateTsSeconds))
             .thenReturn(false)
 
         repository.addBookmark(bookmark)
-        Mockito.verify(bookmarksDao).insert(bookmark)
+        verify(bookmarksDao).insert(bookmark)
     }
 }
