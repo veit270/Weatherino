@@ -13,4 +13,8 @@
     <string name="introduction_button_text">OK, let me use the app</string>
     <string name="permission_not_granted_title">Permission not granted</string>
     <string name="permission_not_granted_message">You can change the permission in the app\'s settings</string>
+    <string name="temp_unit">Temperature unit</string>
+    <string name="celsius">Celsius</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="kelvin">Kelvin</string>
 </resources>

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.veit.app.weatherino.R
 import com.veit.app.weatherino.adapter.SwipeAction
 import com.veit.app.weatherino.data.BookmarkedWeatherInfo
@@ -35,7 +36,9 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
     }
 
     private fun prepareUi(binding: FragmentMainBinding) {
+        requireActivity().removeMenuProvider(this)
         requireActivity().addMenuProvider(this)
+
         viewModel.currentWeather.observe(viewLifecycleOwner) {
             binding.currentWeatherResource = it
         }
@@ -72,6 +75,10 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
         return when (menuItem.itemId) {
             R.id.menu_refresh -> {
                 viewModel.refreshAll()
+                true
+            }
+            R.id.menu_settings -> {
+                findNavController().navigate(MainFragmentDirections.actionMainFragmentToSettingsFragment())
                 true
             }
             else -> false
