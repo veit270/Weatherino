@@ -8,19 +8,19 @@ import com.veit.app.weatherino.api.current_weather.CurrentWeather
 import com.veit.app.weatherino.data.BookmarkedWeatherInfo
 import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.db.WeatherBookmark
+import com.veit.app.weatherino.utils.LocationProvider
 import com.veit.app.weatherino.utils.Resource
 import com.veit.app.weatherino.utils.WeatherChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val weatherChecker: WeatherChecker,
-    private val bookmarksRepository: BookmarksRepository
+    private val bookmarksRepository: BookmarksRepository,
+    private val locationProvider: LocationProvider
 ) : ViewModel() {
     private val _currentWeather = MutableLiveData<Resource<CurrentWeather>>(Resource.Loading())
     val currentWeather: LiveData<Resource<CurrentWeather>> = _currentWeather
@@ -32,7 +32,16 @@ class MainViewModel @Inject constructor(
     private var bookmarksJob: Job? = null
 
     init {
-        refreshAll()
+        viewModelScope.launch(Dispatchers.Default) {
+            coroutineScope {
+                locationProvider.locationAvailableFlow.collect {
+                    if(it) {
+                        coroutineContext.cancel()
+                        refreshAll()
+                    }
+                }
+            }
+        }
     }
 
     fun refreshAll() {
@@ -41,7 +50,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun loadCurrentWeather() {
-        _currentWeather.value = Resource.Loading()
+        _currentWeather.postValue(Resource.Loading())
         currentWeatherJob?.cancel()
         currentWeatherJob = viewModelScope.launch(Dispatchers.Default) {
             _currentWeather.postValue(
@@ -51,7 +60,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun loadBookmarks() {
-        _bookmarkedWeathers.value = Resource.Loading()
+        _currentWeather.postValue(Resource.Loading())
         bookmarksJob?.cancel()
         bookmarksJob = viewModelScope.launch(Dispatchers.Default) {
             bookmarksRepository.deleteOldBookmarks()

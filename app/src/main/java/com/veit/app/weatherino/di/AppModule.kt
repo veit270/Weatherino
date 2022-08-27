@@ -1,5 +1,6 @@
 package com.veit.app.weatherino.di
 
+import android.content.Context
 import com.google.gson.GsonBuilder
 import com.veit.app.weatherino.api.RequestInterceptor
 import com.veit.app.weatherino.api.Weather
@@ -12,6 +13,7 @@ import com.veit.app.weatherino.utils.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -77,8 +79,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideLocationProvider(): LocationProvider {
-        return LocationProviderImpl()
+    fun provideLocationProvider(@ApplicationContext context: Context): LocationProvider {
+        return LocationProviderImpl(context)
     }
 
     @Provides

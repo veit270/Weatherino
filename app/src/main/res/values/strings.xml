@@ -9,4 +9,8 @@
     <string name="ok">Ok</string>
     <string name="name">name</string>
     <string name="data_not_available">Data not available yet</string>
+    <string name="introduction">Welcome to Weatherino!\nThis application requires checking your current location to provide accurate weather information.</string>
+    <string name="introduction_button_text">OK, let me use the app</string>
+    <string name="permission_not_granted_title">Permission not granted</string>
+    <string name="permission_not_granted_message">You can change the permission in the app\'s settings</string>
 </resources>

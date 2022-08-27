@@ -11,10 +11,7 @@ import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.TempData
 import com.veit.app.weatherino.data.db.WeatherBookmark
 import com.veit.app.weatherino.ui.main.MainViewModel
-import com.veit.app.weatherino.utils.CoroutinesRuleTest
-import com.veit.app.weatherino.utils.Resource
-import com.veit.app.weatherino.utils.WeatherChecker
-import com.veit.app.weatherino.utils.awaitValue
+import com.veit.app.weatherino.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -38,6 +35,9 @@ class MainViewModelTest: CoroutinesRuleTest() {
 
     @Mock
     lateinit var bookmarksRepository: BookmarksRepository
+
+    @Mock
+    lateinit var locationProvider: LocationProvider
 
     private var currentWeather: CurrentWeather = prepareCurrentWeather()
 
@@ -112,7 +112,7 @@ class MainViewModelTest: CoroutinesRuleTest() {
 
     private suspend fun initViewModel() {
         expectInit()
-        viewModel = MainViewModel(weatherChecker, bookmarksRepository)
+        viewModel = MainViewModel(weatherChecker, bookmarksRepository, locationProvider)
         assertInitValues()
     }
 
@@ -123,6 +123,7 @@ class MainViewModelTest: CoroutinesRuleTest() {
             .thenReturn(flowOf(bookmarks))
         `when`(weatherChecker.fetchWeatherForBookmarks(bookmarks))
             .thenReturn(bookmarkedWeatherInfoList)
+        `when`(locationProvider.locationAvailableFlow).thenReturn(flowOf(true))
     }
 
     private fun assertInitValues() {
