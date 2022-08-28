@@ -70,7 +70,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun loadBookmarks() {
-        _currentWeather.postValue(Resource.Loading())
+        _bookmarkedWeathers.postValue(Resource.Loading())
         bookmarksJob?.cancel()
         bookmarksJob = viewModelScope.launch(Dispatchers.Default) {
             bookmarksRepository.deleteOldBookmarks()

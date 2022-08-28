@@ -17,4 +17,6 @@
     <string name="celsius">Celsius</string>
     <string name="fahrenheit">Fahrenheit</string>
     <string name="kelvin">Kelvin</string>
+    <string name="try_again">Try again</string>
+    <string name="error">Error\nMake sure you\'re connected to internet and try again.</string>
 </resources>

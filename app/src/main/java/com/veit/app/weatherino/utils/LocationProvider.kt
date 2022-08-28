@@ -60,7 +60,7 @@ class LocationProviderImpl(private val context: Context): LocationProvider {
                 Log.i(LOG_TAG, "Location availability: $locationAvailability")
             }
         }
-        val task = LocationServices.getFusedLocationProviderClient(context)
+        LocationServices.getFusedLocationProviderClient(context)
             .requestLocationUpdates(locationRequest, locationCallback, null)
     }
 

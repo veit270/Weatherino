@@ -16,6 +16,7 @@ import com.veit.app.weatherino.R
 import com.veit.app.weatherino.adapter.SwipeAction
 import com.veit.app.weatherino.data.BookmarkedWeatherInfo
 import com.veit.app.weatherino.databinding.FragmentMainBinding
+import com.veit.app.weatherino.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.time.ZoneId
@@ -39,11 +40,15 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
         requireActivity().removeMenuProvider(this)
         requireActivity().addMenuProvider(this, viewLifecycleOwner)
 
+        binding.viewModel = viewModel
+        binding.addBookmarkDate.setOnClickListener { pickBookmarkDate() }
         viewModel.currentWeather.observe(viewLifecycleOwner) {
             binding.currentWeatherResource = it
+            binding.currentWeatherError = it.status == Status.ERROR
         }
         viewModel.bookmarkedWeathers.observe(viewLifecycleOwner) {
             binding.bookmarksResource = it
+            binding.bookmarksError = it.status == Status.ERROR
         }
 
         binding.bookmarksSwipeAction = object : SwipeAction<BookmarkedWeatherInfo> {
@@ -51,7 +56,6 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
                 viewModel.deleteBookmark(item)
             }
         }
-        binding.addBookmarkDate.setOnClickListener { pickBookmarkDate() }
     }
 
     private fun pickBookmarkDate() {
