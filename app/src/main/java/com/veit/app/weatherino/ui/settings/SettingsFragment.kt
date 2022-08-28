@@ -1,9 +1,8 @@
 package com.veit.app.weatherino.ui.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.veit.app.weatherino.MainActivity
@@ -11,7 +10,7 @@ import com.veit.app.weatherino.databinding.FragmentSettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingsFragment : Fragment() {
+class SettingsFragment : Fragment(), MenuProvider {
 
     private val viewModel: SettingsViewModel by viewModels()
 
@@ -28,5 +27,15 @@ class SettingsFragment : Fragment() {
         (requireActivity() as? MainActivity)?.run {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
+        requireActivity().addMenuProvider(this, viewLifecycleOwner)
+        binding.viewModel = viewModel
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        //
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return false
     }
 }

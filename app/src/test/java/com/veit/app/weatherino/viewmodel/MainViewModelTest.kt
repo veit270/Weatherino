@@ -1,5 +1,6 @@
 package com.veit.app.weatherino.viewmodel
 
+import app.cash.turbine.test
 import com.veit.app.weatherino.api.Coord
 import com.veit.app.weatherino.api.Weather
 import com.veit.app.weatherino.api.current_weather.*
@@ -13,14 +14,15 @@ import com.veit.app.weatherino.data.db.WeatherBookmark
 import com.veit.app.weatherino.ui.main.MainViewModel
 import com.veit.app.weatherino.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
@@ -39,6 +41,9 @@ class MainViewModelTest: CoroutinesRuleTest() {
     @Mock
     lateinit var locationProvider: LocationProvider
 
+    @Mock
+    lateinit var settingsManager: SettingsManager
+
     private var currentWeather: CurrentWeather = prepareCurrentWeather()
 
     private val bookmarks = listOf(
@@ -51,13 +56,47 @@ class MainViewModelTest: CoroutinesRuleTest() {
         BookmarkedWeatherInfo(it, prepareDailyWeather())
     }
 
+    private lateinit var settingsUpdatedFlow: Flow<UserSettings>
+
+    @Before
+    fun setup() {
+        settingsUpdatedFlow = flowOf(UserSettings())
+    }
+
+    @Test
+    fun initViewModelSuccessfully() = runTest {
+        initViewModel()
+
+        verify(weatherChecker).fetchCurrentWeather()
+        verify(weatherChecker).fetchWeatherForBookmarks(bookmarks)
+    }
+
+    @Test
+    fun initViewModelWithErrors() = runTest {
+        `when`(weatherChecker.fetchCurrentWeather())
+            .thenReturn(null)
+        `when`(bookmarksRepository.bookmarksFlow)
+            .thenReturn(flowOf(bookmarks))
+        `when`(weatherChecker.fetchWeatherForBookmarks(bookmarks))
+            .thenReturn(null)
+        `when`(locationProvider.locationAvailableFlow).thenReturn(flowOf(true))
+        `when`(settingsManager.settingsUpdatedFlow).thenReturn(settingsUpdatedFlow)
+
+        viewModel = MainViewModel(weatherChecker, bookmarksRepository, locationProvider, settingsManager)
+
+        viewModel.currentWeather.awaitValue(Resource.Error())
+        viewModel.bookmarkedWeathers.awaitValue(Resource.Error())
+
+        verify(weatherChecker).fetchCurrentWeather()
+        verify(weatherChecker).fetchWeatherForBookmarks(bookmarks)
+    }
+
     @Test
     fun loadCurrentWeather() = runTest {
         initViewModel()
 
         currentWeather = prepareCurrentWeather() // different dt
-        `when`(weatherChecker.fetchCurrentWeather())
-            .thenReturn(currentWeather)
+        `when`(weatherChecker.fetchCurrentWeather()).thenReturn(currentWeather)
 
         viewModel.loadCurrentWeather()
 
@@ -110,9 +149,24 @@ class MainViewModelTest: CoroutinesRuleTest() {
         verify(bookmarksRepository).deleteBookmark(bookmark)
     }
 
+    @Test
+    fun updateSettings() = runTest {
+        settingsUpdatedFlow = flowOf(UserSettings(), UserSettings(TemperatureUnitType.KELVIN))
+        initViewModel()
+        advanceUntilIdle()
+
+        settingsUpdatedFlow.test {
+            awaitItem()
+            awaitItem()
+            awaitComplete()
+        }
+        verify(weatherChecker, times(2)).fetchCurrentWeather()
+        verify(weatherChecker, times(2)).fetchWeatherForBookmarks(bookmarks)
+    }
+
     private suspend fun initViewModel() {
         expectInit()
-        viewModel = MainViewModel(weatherChecker, bookmarksRepository, locationProvider)
+        viewModel = MainViewModel(weatherChecker, bookmarksRepository, locationProvider, settingsManager)
         assertInitValues()
     }
 
@@ -124,6 +178,7 @@ class MainViewModelTest: CoroutinesRuleTest() {
         `when`(weatherChecker.fetchWeatherForBookmarks(bookmarks))
             .thenReturn(bookmarkedWeatherInfoList)
         `when`(locationProvider.locationAvailableFlow).thenReturn(flowOf(true))
+        `when`(settingsManager.settingsUpdatedFlow).thenReturn(settingsUpdatedFlow)
     }
 
     private fun assertInitValues() {

@@ -10,17 +10,20 @@ import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.db.WeatherBookmark
 import com.veit.app.weatherino.utils.LocationProvider
 import com.veit.app.weatherino.utils.Resource
+import com.veit.app.weatherino.utils.SettingsManager
 import com.veit.app.weatherino.utils.WeatherChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val weatherChecker: WeatherChecker,
     private val bookmarksRepository: BookmarksRepository,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val settingsManager: SettingsManager
 ) : ViewModel() {
     private val _currentWeather = MutableLiveData<Resource<CurrentWeather>>(Resource.Loading())
     val currentWeather: LiveData<Resource<CurrentWeather>> = _currentWeather
@@ -41,6 +44,13 @@ class MainViewModel @Inject constructor(
                     }
                 }
             }
+        }
+        viewModelScope.launch(Dispatchers.Default) {
+            settingsManager.settingsUpdatedFlow
+                .drop(1)
+                .collectLatest {
+                    refreshAll()
+                }
         }
     }
 

@@ -37,7 +37,7 @@ class MainFragment : Fragment(), MenuProvider, DatePickerDialog.OnDateSetListene
 
     private fun prepareUi(binding: FragmentMainBinding) {
         requireActivity().removeMenuProvider(this)
-        requireActivity().addMenuProvider(this)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner)
 
         viewModel.currentWeather.observe(viewLifecycleOwner) {
             binding.currentWeatherResource = it

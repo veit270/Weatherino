@@ -15,10 +15,10 @@ object Utils {
      * @return readable date
      */
     fun secondsToReadableDate(seconds: Long, context: Context): String = DateFormat.getDateFormat(context)
-        .format(Date(seconds.toLong() * 1000))
+        .format(Date(seconds * 1000))
 }
 
-fun toReadableTemperature(temp: Double) = "${temp.toInt()} \u2103"
+fun toReadableTemperature(temp: Double, unitChar: Char) = "${temp.toInt()} $unitChar"
 
 /**
  * Converts given time in seconds to time of start of day in the default timezone.

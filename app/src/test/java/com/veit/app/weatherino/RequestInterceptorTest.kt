@@ -1,8 +1,10 @@
 package com.veit.app.weatherino
 
 import com.veit.app.weatherino.api.Coord
-import com.veit.app.weatherino.api.RequestInterceptor
+import com.veit.app.weatherino.api.WeatherApiRequestInterceptor
 import com.veit.app.weatherino.utils.LocationProvider
+import com.veit.app.weatherino.utils.SettingsManager
+import com.veit.app.weatherino.utils.UserSettings
 import okhttp3.Interceptor
 import okhttp3.Request
 import org.junit.Before
@@ -20,22 +22,25 @@ class RequestInterceptorTest {
     lateinit var locationProvider: LocationProvider
 
     @Mock
+    lateinit var settingsManager: SettingsManager
+
+    @Mock
     lateinit var chain: Interceptor.Chain
 
-    private lateinit var requestInterceptor: RequestInterceptor
+    private lateinit var requestInterceptor: WeatherApiRequestInterceptor
 
     @Before
     fun setup() {
-        requestInterceptor = RequestInterceptor(locationProvider)
+        requestInterceptor = WeatherApiRequestInterceptor(locationProvider, settingsManager)
     }
 
     @Test
     fun interceptRequest() {
         val request = Request.Builder().url("https://example.com").build()
 
-        `when`(chain.request())
-            .thenReturn(request)
+        `when`(chain.request()).thenReturn(request)
         `when`(locationProvider.getLocation()).thenReturn(Coord(23.0, 24.0))
+        `when`(settingsManager.userSettings).thenReturn(UserSettings())
 
         requestInterceptor.intercept(chain)
 

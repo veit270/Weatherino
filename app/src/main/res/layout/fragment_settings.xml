@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.veit.app.weatherino.ui.settings.SettingsViewModel" />
+    </data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -19,28 +25,32 @@
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:checkedButton="@={viewModel.temperatureTypeButtonChecked}">
 
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/celsius"
                 android:layout_weight="1"
-                android:textSize="@dimen/smallText"/>
+                android:textSize="@dimen/smallText"
+                android:id="@+id/celsiusRadioButton"/>
 
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/fahrenheit"
                 android:layout_weight="1"
-                android:textSize="@dimen/smallText"/>
+                android:textSize="@dimen/smallText"
+                android:id="@+id/fahrenheitRadioButton"/>
 
             <RadioButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/kelvin"
                 android:layout_weight="1"
-                android:textSize="@dimen/smallText"/>
+                android:textSize="@dimen/smallText"
+                android:id="@+id/kelvinRadioButton"/>
 
         </RadioGroup>
 

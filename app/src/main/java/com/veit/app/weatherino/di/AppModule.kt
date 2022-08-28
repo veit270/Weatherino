@@ -1,10 +1,11 @@
 package com.veit.app.weatherino.di
 
 import android.content.Context
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.veit.app.weatherino.api.RequestInterceptor
 import com.veit.app.weatherino.api.Weather
 import com.veit.app.weatherino.api.WeatherApi
+import com.veit.app.weatherino.api.WeatherApiRequestInterceptor
 import com.veit.app.weatherino.data.BookmarksRepository
 import com.veit.app.weatherino.data.BookmarksRepositoryImpl
 import com.veit.app.weatherino.data.TempData
@@ -42,10 +43,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org")
-            .addConverterFactory(GsonConverterFactory.create(createGson()))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
     }
@@ -67,8 +68,8 @@ object AppModule {
     @Provides
     @Singleton
     @com.veit.app.weatherino.di.RequestInterceptorQualifier
-    fun provideRequestInterceptor(locationProvider: LocationProvider): Interceptor {
-        return RequestInterceptor(locationProvider)
+    fun provideRequestInterceptor(locationProvider: LocationProvider, settingsManager: SettingsManager): Interceptor {
+        return WeatherApiRequestInterceptor(locationProvider, settingsManager)
     }
 
     @Provides
@@ -85,14 +86,30 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideSettingsManager(@ApplicationContext context: Context): SettingsManager {
+        return SettingsManagerImpl(context)
+    }
+
+    @Provides
+    @Singleton
     fun provideWeatherApi(retrofit: Retrofit): WeatherApi {
         return retrofit.create(WeatherApi::class.java)
     }
 
-    private fun createGson() = GsonBuilder()
-        .registerTypeAdapter(TempData::class.java, TempDataAdapter())
-        .registerTypeAdapter(Weather::class.java, WeatherDeserializer())
-        .create()
+    @Provides
+    @Singleton
+    fun provideTempDataAdapter(settingsManager: SettingsManager): TempDataAdapter {
+        return TempDataAdapter(settingsManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGson(tempDataAdapter: TempDataAdapter): Gson {
+        return GsonBuilder()
+            .registerTypeAdapter(TempData::class.java, tempDataAdapter)
+            .registerTypeAdapter(Weather::class.java, WeatherDeserializer())
+            .create()
+    }
 }
 
 @Qualifier
