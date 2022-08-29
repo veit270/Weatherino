@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="com.veit.app.weatherino.utils.Resource"/>
+        <import type="com.veit.app.weatherino.api.current_weather.CurrentWeather"/>
+        <import type="com.veit.app.weatherino.data.BookmarkedWeatherInfo"/>
+        <import type="java.util.List"/>
+        <import type="com.veit.app.weatherino.adapter.SwipeAction" />
+        <variable
+            name="currentWeatherResource"
+            type="Resource&lt;CurrentWeather>" />
+        <variable
+            name="bookmarksResource"
+            type="Resource&lt;List&lt;BookmarkedWeatherInfo>>" />
+        <variable
+            name="bookmarksSwipeAction"
+            type="SwipeAction&lt;BookmarkedWeatherInfo>" />
+        <variable
+            name="viewModel"
+            type="com.veit.app.weatherino.ui.main.MainViewModel" />
+        <variable
+            name="currentWeatherError"
+            type="Boolean" />
+        <variable
+            name="bookmarksError"
+            type="Boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <com.veit.app.weatherino.ui.views.CurrentWeatherView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                currentWeatherResource="@{currentWeatherResource}"
+                visibleOrInvisible="@{!currentWeatherError}"
+                android:layout_gravity="center"/>
+
+            <com.veit.app.weatherino.ui.views.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                text="@{@string/error}"
+                android:onClick="@{() -> viewModel.loadCurrentWeather()}"
+                visibleOrGone="@{currentWeatherError}"/>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_bookmark"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="@dimen/margin_standard"
+                    android:id="@+id/addBookmarkDate"/>
+
+                <com.veit.app.weatherino.ui.views.BookmarksView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    bookmarksResource="@{bookmarksResource}"
+                    swipeAction="@{bookmarksSwipeAction}"
+                    visibleOrInvisible="@{!bookmarksError}"/>
+
+            </LinearLayout>
+
+            <com.veit.app.weatherino.ui.views.ErrorView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                text="@{@string/error}"
+                android:onClick="@{() -> viewModel.loadBookmarks()}"
+                visibleOrGone="@{bookmarksError}"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</layout>
