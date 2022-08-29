@@ -45,7 +45,11 @@ class WeatherCheckerImpl @Inject constructor(
     private suspend fun toBookmarkedWeatherInfo(list: List<DailyWeather>, bookmarks: List<WeatherBookmark>): List<BookmarkedWeatherInfo> {
         return withContext(Dispatchers.Default) {
             bookmarks.map { bookmark ->
-                BookmarkedWeatherInfo(bookmark, list.find { convertToStartOfDay(it.dt) == bookmark.dateTsSeconds })
+                BookmarkedWeatherInfo(
+                    bookmark,
+                    list.find {
+                        convertToStartOfDay(it.dt) == bookmark.dateTsSeconds
+                    })
             }
         }
     }
